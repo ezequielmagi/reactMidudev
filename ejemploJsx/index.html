@@ -12,43 +12,125 @@
         text-align: center;
         width: 100px;
       }
+
+      picture.is-small {
+        width: 50px;
+      }
+      picture.is-large {
+        width: 200px;
+      }
+
       img {
         border-radius: 50%;
         box-shadow: 0 0 15px #999;
-        width: 100px;
+        width: 100%;
       }
 
       img.disabled {
         opacity: 0.3;
       }
     </style>
+    <script
+      src="https://unpkg.com/react@17/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
   </head>
   <body>
     <h1>Woman in Tech</h1>
     <div id="app"></div>
 
     <!--  -->
-    <script>
+    <script type="text/babel">
       const $app = document.getElementById("app");
-      const Avatar = (params) => {
-        const src = `https://randomuser.me/api/portraits/women/${params.id}.jpg`;
+      const useState = React.useState;
 
-        return `
-        <picture>
-          <img src="${src}" alt="" />
-          ${params.name}
-        </picture>
-        `;
+      const Avatar = ({ id, name = "Player 1", size }) => {
+        const [enabled, setEnabled] = useState(true);
+
+        const src = `https://randomuser.me/api/portraits/women/${id}.jpg`;
+        // return h("img", { src });
+        let pictureClassName = "";
+        if (size === "small") {
+          pictureClassName = "is-small";
+        } else if (size === "large") {
+          pictureClassName = "is-large";
+        }
+
+        const imgClassName = enabled ? "" : "disabled";
+        return (
+          <picture className={pictureClassName}>
+            <img
+              onClick={() => setEnabled(!enabled)}
+              className={imgClassName}
+              src={src}
+            />
+            <strong> {enabled ? name : "Inactiva"}</strong>
+          </picture>
+        );
       };
 
-      $app.innerHTML += Avatar({ id: 1, name: "Andrea" });
-      $app.innerHTML += Avatar({ id: 2, name: "Paola" });
+      function Contador() {
+        const [contadorValue, actualizadorContador] = useState(33);
+        const [contadorDeClicks, actualizadorDeClicks] = useState(0);
+        return (
+          <div>
+            <span>{contadorValue}</span>
+            <button
+              onClick={() => {
+                actualizadorContador(contadorValue + 1);
+                actualizadorDeClicks(contadorDeClicks + 1);
+              }}
+            >
+              incrementar +
+            </button>
+            <button
+              onClick={() => {
+                actualizadorContador(contadorValue - 1);
+                actualizadorDeClicks(contadorDeClicks + 1);
+              }}
+            >
+              decrementar -
+            </button>
+            <p>{contadorDeClicks}</p>
+          </div>
+        );
+      }
 
-      $app.querySelectorAll("img").forEach((img) => {
-        img.addEventListener("click", () => {
-          img.classList.toggle("disabled");
-        });
-      });
+      ReactDOM.render(
+        <div>
+          <Contador />
+          <Avatar id={1} name="Patricia" size="small" />
+          <Avatar id={69} name="Luana" size="" />
+          <Avatar id={10} name="Cristina" size="large" />
+          <Avatar id={8} size="large" />
+        </div>,
+        $app
+      );
+
+      // const Avatar = (params) => {
+      //   const src = `https://randomuser.me/api/portraits/women/${params.id}.jpg`;
+
+      //   return `
+      //   <picture>
+      //     <img src="${src}" alt="" />
+      //     ${params.name}
+      //   </picture>
+      //   `;
+      // };
+
+      // $app.innerHTML += Avatar({ id: 1, name: "Andrea" });
+      // $app.innerHTML += Avatar({ id: 2, name: "Paola" });
+
+      // $app.querySelectorAll("img").forEach((img) => {
+      //   img.addEventListener("click", () => {
+      //     img.classList.toggle("disabled");
+      //   });
+      // });
     </script>
   </body>
 </html>
